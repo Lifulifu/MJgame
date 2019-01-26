@@ -1,8 +1,70 @@
 body {
     margin: 0;
     padding: 0;
-    text-align: center;
 }
 #container {
-    margin-top: 3%;
+    position: relative;
+    margin: 3% auto;
+    height: 600px;
+    width: 1000px;
+}
+.bg {
+    position: absolute;
+    height: 600px;
+    width: 1000px;
+    z-index: 99;
+    
+    background-color: rgba(0, 0, 0, 0.7);
+    transition: display 0.5s;
+}
+#menu-bg {
+    display: block;
+}
+#countdown-bg {
+    display: none;
+    text-align: center;
+    font: 80pt Arial;
+    color: white;
+}
+#countdown {
+    display: inline-block;
+    margin-top: 200px;
+}
+
+#btn-container {
+    text-align: center;
+    margin-top: 150px;
+}
+.btn {
+    display: inline-block;
+    z-index: 100;
+    padding: 20px;
+    width: 400px;
+
+    font: 40pt Arial;
+    color: white;
+    background-color: none;
+    transition: color 0.5s, background-color 0.5s;
+    cursor: pointer;
+}
+.btn:hover {
+    color: black;
+    background-color: white;
+}
+#start {
+    font: 80pt Arial;
+}
+#setting {
+    display: inline-block;
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    height: 40px;
+    width: 40px;
+
+    background-image: url('img/setting.png');
+    background-size: contain;
+
+    z-index: 101;
+    color: white;
 }

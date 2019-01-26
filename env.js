@@ -5,6 +5,10 @@ const TILE_W = 46;
 const TILE_H = 60;
 const PLAT_W = TILE_W*15;
 
+// game vars
+var yama = []; // mjID=0~135
+var shooting; // interval func
+
 // matter.js stuff
 var Engine = Matter.Engine,
     Render = Matter.Render,
@@ -23,7 +27,7 @@ var engine = Engine.create(),
 
 // create renderer
 var render = Render.create({
-    element: document.getElementById('screen'),
+    element: document.getElementById('container'),
     engine: engine,
     options: {
         height: HEIGHT,
@@ -54,19 +58,34 @@ World.add(world, mouseConstraint);
 Render.run(render);
 render.mouse = mouse;
 
-//---------------------
-
-// add platform
-var platform = Bodies.rectangle(WIDTH*0.5, 200, PLAT_W, 20, { isStatic: true });
-World.add(world, [platform]);
-
 //--------------------
 
-var yama = [] // mjID=0~135
+function initWorld() {
+    // reset yama
+    yama = [];
+    for(let i=0; i<=33; i++)
+        for(let j=0; j<4; j++) // 4 tiles
+            yama.push(i);
+    
+    // add platform
+    var platform = Bodies.rectangle(WIDTH*0.5, 200, PLAT_W, 20, { isStatic: true });
+    World.add(world, [platform]);
+    
+}
 
-for(let i=0; i<=33; i++)
-    for(let j=0; j<4; j++) // 4 tiles
-        yama.push(i);
+function resetWorld() {
+    yama = [];
+    // stop shooting
+    clearInterval(shooting);
+    // remove all bodies
+    let l = world.bodies.length;
+    for(let i=l-1; i>=0; i--){ //remove from back
+        Matter.Composite.remove(world, world.bodies[i]);
+    }
+    // clear render callback
+    Events.off(render);
+}
+
 
 // take a tile from yama and shoot it
 function shootTile() {
@@ -95,10 +114,11 @@ function shootTile() {
 
 // remove tiles if out of bounds, and put back to yama
 function removeTiles(){
-    for(b of world.bodies){
-        if(b.position.y > 1000){
-            yama.push(b.mjID);
-            World.remove(world, b);
+    let l = world.bodies.length;
+    for(let i=l-1; i>=0; i--){ // loop from back
+        if(world.bodies[i].position.y > 1000){
+            yama.push(world.bodies[i].mjID);
+            Matter.Composite.remove(world, world.bodies[i]);
         }
     }
 }
