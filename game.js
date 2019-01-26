@@ -137,7 +137,7 @@ function updateTimer() { // 60 fps
     var ctx = render.context;
     ctx.font = "80pt Arial";
     ctx.textAlign = 'center';
-    ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
     ctx.fillText(`${m.padStart(2,'0')}:${s.padStart(2,'0')}:${ms10.padStart(2,'0')}`, WIDTH*0.5, 400);
 }
 
@@ -155,7 +155,7 @@ function updateTimerReverse() { // 60 fps
     var ctx = render.context;
     ctx.font = "80pt Arial";
     ctx.textAlign = 'center';
-    ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
     ctx.fillText(`${m.padStart(2,'0')}:${s.padStart(2,'0')}:${ms10.padStart(2,'0')}`, WIDTH*0.5, 400);
 }
 
@@ -178,7 +178,7 @@ function updateSMbar(){
     var barW = 200;
     var ctx = render.context;
     // border
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
     ctx.beginPath();
     ctx.moveTo(WIDTH*0.5-barW*0.5-5, 420);
     ctx.lineTo(WIDTH*0.5-barW*0.5-5, 420+barH);
