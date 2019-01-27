@@ -6,7 +6,7 @@ const TILE_H = 60;
 const PLAT_W = TILE_W*15;
 
 // game vars
-var yama = []; // mjID=0~135
+var yama = []; // mjID
 var shooting; // interval func
 
 // matter.js stuff
@@ -61,16 +61,18 @@ render.mouse = mouse;
 //--------------------
 
 function initWorld() {
-    // reset yama
-    yama = [];
-    for(let i=0; i<=33; i++)
-        for(let j=0; j<4; j++) // 4 tiles
-            yama.push(i);
-    
+    resetYama();
     // add platform
     var platform = Bodies.rectangle(WIDTH*0.5, 200, PLAT_W, 20, { isStatic: true });
     World.add(world, [platform]);
     
+}
+
+function resetYama() {
+    yama = [];
+    for(let id of mjIDs)
+        for(let j=0; j<4; j++) // 4 tiles
+            yama.push(id);
 }
 
 function resetWorld() {
@@ -91,14 +93,15 @@ function resetWorld() {
 function shootTile() {
     if(yama.length > 0){
         //random draw from yama
-        var mjID = yama.splice(Math.floor(Math.random()*yama.length), 1);
+        var mjID = yama.splice(Math.floor(Math.random()*yama.length), 1)[0];
         var x = WIDTH * 0.5 + Math.random()*400 - 200; // center +- 200
         var y = HEIGHT + 50;
         var tile = Bodies.rectangle(x, y, TILE_W, TILE_H, {
             chamfer: { radius: 5 },
             angle: Math.random()*2*Math.PI,
-            render: {sprite:{ texture: textures[mjID] }}
+            render: {sprite:{ texture: 'img/'+textures[mjID]+'.png' }}
         });
+        //console.log(mjID);
         tile.mjID = mjID;
         World.add(world, tile);
 
@@ -116,23 +119,24 @@ function shootTile() {
 function removeTiles(){
     let l = world.bodies.length;
     for(let i=l-1; i>=0; i--){ // loop from back
-        if(world.bodies[i].position.y > 1000){
+        let y = world.bodies[i].position.y
+        if(y > 1000 || y < -1000){
             yama.push(world.bodies[i].mjID);
             Matter.Composite.remove(world, world.bodies[i]);
         }
     }
 }
 
-// check tiles on platform
+// check tiles on platform (only mjID)
 function tilesOnPlatform(){
-    var startPoint = {x: 0.5*(WIDTH-PLAT_W), y: 400-25-1};
-        endPoint = {x: 0.5*(WIDTH+PLAT_W), y: 400-25-1}
+    var startPoint = {x: 0.5*(WIDTH-PLAT_W), y: 200-25-1};
+        endPoint = {x: 0.5*(WIDTH+PLAT_W), y: 200-25-1}
     var collisions = Query.ray(world.bodies, startPoint, endPoint);
     var IDs = [];
     for(var collision of collisions){
         IDs.push(collision.bodyA.mjID);
     }
-    console.log(IDs);
+    return IDs;
 }
 
 

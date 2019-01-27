@@ -1,16 +1,23 @@
 
-var textures = [];
+var textures = {
+    '0': '1z',
+    '2': '2z',
+    '4': '3z',
+    '6': '4z',
+    '10': '6z',
+    '12': '7z',
+    '14': '5z',
+}
+for(let i=1; i<=9; i++){
+    textures['2'+i.toString()] = i.toString()+'w';
+    textures['3'+i.toString()] = i.toString()+'t';
+    textures['4'+i.toString()] = i.toString()+'s';
+}
 
-// wan ID 0~8
-for(let i=0; i<=8; i++)
-    textures.push('img/' + (1+i).toString() + 'w.png');
-// ton ID 9~17
-for(let i=0; i<=8; i++)
-    textures.push('img/' + (1+i).toString() + 't.png');
-// sou ID 18~26
-for(let i=0; i<=8; i++)
-    textures.push('img/' + (1+i).toString() + 's.png');
-// zi ID 27~33
-for(let i=0; i<=8; i++)
-    textures.push('img/' + (1+i).toString() + 'z.png');
+var mjIDs = [
+    '0','2','4','6','10','12','14',
+    '21','22','23','24','25','26','27','28','29',
+    '31','32','33','34','35','36','37','38','39',
+    '41','42','43','44','45','46','47','48','49'
+]
 

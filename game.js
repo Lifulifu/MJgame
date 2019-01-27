@@ -4,14 +4,14 @@ $(document).ready(function(){
 const DROP_INTERVAL = 200; // ms
 const SLOW_MO_RATE = 0.3;
 const FPS = 60;
-const TIME_LIMIT = 120000;
 
 var slowMoing = false;
 var keyDowned = false;
 var smBarVal = 100;
 var inGame = false;
-var modeChoice = 0;
-var mode = 0; // 0:speed, 1:point
+var mode = 0; // 0:speed, 1:pointS, 2:pointL
+var prevHandL = 0;
+var handL = 0;
 
 // menu part------------------
 
@@ -21,13 +21,17 @@ $("#setting").click(function() { // toggle menu
     else $("#menu-bg").fadeOut();
 })
 $("#mode").click(function () {
-    if(modeChoice == 0){
-        $("#mode").text("MODE: POINT");
-        modeChoice = 1;
+    if(mode == 0){
+        $("#mode").text("模式: 計點(3 min)");
+        mode = 1;
+    }
+    else if(mode == 1) {
+        $("#mode").text("模式: 計點(5 min)");
+        mode = 2;
     }
     else {
-        $("#mode").text("MODE: SPEED");
-        modeChoice = 0;
+        $("#mode").text("模式: 競速");
+        mode = 0;
     }
 });
 $("#back").click(function() {
@@ -41,27 +45,15 @@ $("#start").click(function() { // start game
 
     countDown(3, function() {
         inGame = true;
-        mode = modeChoice; // execute choice
         
         if(mode == 0)
             startSpeedMode();
-        else
-            startPointMode();
+        else if(mode == 1)
+            startPointMode(3000);
+        else    
+            startPointMode(5000);
     });
 });
-$(document).keydown(function(event){
-    if(event.which == 32 && inGame && !keyDowned && !slowMoing){ // space bar 
-        startSM();
-    }
-    keyDowned = true;
-});
-$(document).keyup(function(event){
-    if(event.which == 32 && inGame && keyDowned && slowMoing){ // space bar
-        stopSM();
-    }
-    keyDowned = false;
-});
-
 function countDown(count, callBack) {
     $("#countdown").text("READY");
     $("#countdown-bg").fadeIn();
@@ -75,6 +67,9 @@ function countDown(count, callBack) {
         }
     }, 1000);
 }
+
+
+// speed mode-----------------------
 function startSpeedMode() {
     ms = 0;
     initWorld();
@@ -88,11 +83,54 @@ function startSpeedMode() {
     Events.on(render, 'afterRender', function(e){
         updateTimer();
         updateSMbar();
-    });
 
+        // result: agari
+        var hand = tilesOnPlatform();
+        prevHandL = handL;
+        handL = hand.length
+        if(handL == 14 && handL != prevHandL && inGame) {
+            hand = hand.map(x => parseInt(x));
+            var result = agariJudger(hand, 29);
+            if(result) // agari
+                speedModeAgari(hand, result);
+        }
+    });
 }
-function startPointMode() {
-    ms = TIME_LIMIT;
+function speedModeAgari(hand, result) {
+    inGame = false;
+    clearInterval(shooting);
+    console.log(result);
+
+    // time
+    $("#agari-bg #time").text(time2Str(ms));
+    // hand img
+    $("#agari-bg #hand").text('');
+    for(let tile of hand.sort((a,b) => a-b)) // sort by numerical val
+        $("#agari-bg #hand").append(`<img src="img/${textures[tile]}.png"/>`);
+    // yaku
+    $("#agari-bg #yaku").text('');
+    for(let yaku of result.yakus) {
+        $("#agari-bg #yaku").append(
+            `<br><span>${yaku.name} ${yaku.hanCount}</span>`
+        );
+    }
+    // point
+    $("#agari-bg #point").text(`${result.agariType} ${result.score.toString()} 点`);
+    
+    $("#agari-bg").fadeIn();
+}
+$("#agari-bg").click(function() { // return to title
+    $("#result-bg").fadeOut();
+    resetWorld();
+    initRun();
+    $("#menu-bg").fadeIn();
+});
+
+
+
+// point mode---------------------
+function startPointMode(time_lim) {
+    ms = time_lim;
     initWorld();
     // start shooting
     shooting = setInterval(function(){
@@ -104,9 +142,54 @@ function startPointMode() {
     Events.on(render, 'afterRender', function(e){
         updateTimerReverse();
         updateSMbar();
+
+        // result: time out
+        if(ms <= 0 && inGame) {
+            pointModeTimeout();
+        }
+
+        // result: agari
+        else {
+            var hand = tilesOnPlatform();
+            prevHandL = handL;
+            handL = hand.length
+            if(handL == 2 && handL != prevHandL && inGame) {
+                console.log(hand);
+                pointModeAgari();
+            }
+        }
     });
 
 }
+function pointModeTimeout() {
+    inGame = false;
+    clearInterval(shooting);
+    $("#timeout-bg").fadeIn();
+}
+$("#timeout-bg .btn").click(function() { // return to title
+    $("#point-timeout-bg").fadeOut();
+    resetWorld();
+    initRun();
+    $("#menu-bg").fadeIn();
+});
+function pointModeAgari() {
+    speedModeAgari();
+}
+
+
+// in game-------------------------
+$(document).keydown(function(event){
+    if(event.which == 32 && inGame && !keyDowned && !slowMoing){ // space bar 
+        startSM();
+    }
+    keyDowned = true;
+});
+$(document).keyup(function(event){
+    if(event.which == 32 && inGame && keyDowned && slowMoing){ // space bar
+        stopSM();
+    }
+    keyDowned = false;
+});
 function startSM() {
     console.log('slow-mo')
     slowMoing = true;
@@ -124,41 +207,40 @@ function stopSM() {
         removeTiles();
     }, DROP_INTERVAL);
 }
-
+function time2Str(t) {
+    if(t <= 0)
+        return '00:00:00';
+    let ms10 = (Math.floor(t/10) % 100).toString();
+    let s = (Math.floor(t/1000) % 60).toString();
+    let m = (Math.floor(t/60000)).toString();
+    return `${m.padStart(2,'0')}:${s.padStart(2,'0')}:${ms10.padStart(2,'0')}`;
+}
 function updateTimer() { // 60 fps
-    let ms10 = (Math.floor(ms/10) % 100).toString();
-    let s = (Math.floor(ms/1000) % 60).toString();
-    let m = (Math.floor(ms/60000)).toString();
-    if(slowMoing)
+    var ctx = render.context;
+    ctx.font = "80pt Arial";
+    ctx.textAlign = 'center';
+    ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+    ctx.fillText(time2Str(ms), WIDTH*0.5, 400);
+    
+    if(inGame && slowMoing)
         ms += (50 / 3) * SLOW_MO_RATE;
-    else
+    else if(inGame)
         ms += 50 / 3; // T = 1000/60 ms
 
+}
+function updateTimerReverse() { // 60 fps
     var ctx = render.context;
     ctx.font = "80pt Arial";
     ctx.textAlign = 'center';
     ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
-    ctx.fillText(`${m.padStart(2,'0')}:${s.padStart(2,'0')}:${ms10.padStart(2,'0')}`, WIDTH*0.5, 400);
-}
+    ctx.fillText(time2Str(ms), WIDTH*0.5, 400);
 
-function updateTimerReverse() { // 60 fps
-    if(ms <= 0)
-        ms = 0;
-    let ms10 = (Math.floor(ms/10) % 100).toString();
-    let s = (Math.floor(ms/1000) % 60).toString();
-    let m = (Math.floor(ms/60000)).toString();
-    if(slowMoing)
+    if(inGame && slowMoing)
         ms -= (50 / 3) * SLOW_MO_RATE;
-    else
+    else if(inGame)
         ms -= 50 / 3; // T = 1000/60 ms
 
-    var ctx = render.context;
-    ctx.font = "80pt Arial";
-    ctx.textAlign = 'center';
-    ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
-    ctx.fillText(`${m.padStart(2,'0')}:${s.padStart(2,'0')}:${ms10.padStart(2,'0')}`, WIDTH*0.5, 400);
 }
-
 function updateSMbar(){
     if(slowMoing) 
         smBarVal -= 0.5;
@@ -186,17 +268,15 @@ function updateSMbar(){
     ctx.lineTo(WIDTH*0.5+barW*0.5+5, 420+barH);
     ctx.stroke();
     // bar
-    ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
     ctx.fillRect(WIDTH*0.5-barW*0.5, 420, 2*smBarVal, barH);
 }
 
+
+
 function initRun() { // start shooting with no plat
-    // reset yama
-    yama = [];
-    for(let i=0; i<=33; i++)
-        for(let j=0; j<4; j++) // 4 tiles
-            yama.push(i);
-    // start shooting
+    resetYama();
+    // start shooting as bg
     shooting = setInterval(function(){
         shootTile();
         removeTiles();

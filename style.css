@@ -1,6 +1,7 @@
 body {
     margin: 0;
     padding: 0;
+    color: white;
 }
 #container {
     position: relative;
@@ -8,41 +9,22 @@ body {
     height: 600px;
     width: 1000px;
 }
+
+/*general*/
 .bg {
     position: absolute;
     height: 600px;
     width: 1000px;
-    z-index: 99;
     
     background-color: rgba(0, 0, 0, 0.7);
     transition: display 0.5s;
 }
-#menu-bg {
-    display: block;
-}
-#countdown-bg {
-    display: none;
-    text-align: center;
-    font: 80pt Arial;
-    color: white;
-}
-#countdown {
-    display: inline-block;
-    margin-top: 200px;
-}
-
-#btn-container {
-    text-align: center;
-    margin-top: 150px;
-}
 .btn {
     display: inline-block;
-    z-index: 100;
     padding: 20px;
     width: 400px;
 
-    font: 40pt Arial;
-    color: white;
+    font: 30pt DFKai-SB;
     background-color: none;
     transition: color 0.5s, background-color 0.5s;
     cursor: pointer;
@@ -51,8 +33,18 @@ body {
     color: black;
     background-color: white;
 }
-#start {
-    font: 80pt Arial;
+
+/*menu*/
+#menu-bg {
+    display: block;
+    z-index: 100;
+}
+#menu-bg #btn-container {
+    text-align: center;
+    margin-top: 150px;
+}
+#menu-bg #btn-container #start {
+    font: 70pt DFKai-SB;
 }
 #setting {
     display: inline-block;
@@ -65,6 +57,70 @@ body {
     background-image: url('img/setting.png');
     background-size: contain;
 
-    z-index: 101;
-    color: white;
+    z-index: 150;
+}
+#menu-bg #tips {
+    display: inline-block;
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+
+    font: 20pt DFKai-SB;
+}
+#menu-bg #tips #tips-key {
+    font: 15pt Arial;
+    border: 2px solid white;
+    border-radius: 10px;
+    padding: 5px 10px;
+}
+
+/*count down*/
+#countdown-bg {
+    display: none;
+    text-align: center;
+
+    z-index: 200;
+}
+#countdown-bg #countdown {
+    display: inline-block;
+    margin-top: 200px;
+    font: 80pt Arial;
+}
+
+/*point timeout*/
+#timeout-bg {
+    display: none;
+    text-align: center;
+
+    z-index: 300;
+}
+#timeout-bg #point-timeout {
+    margin-top: 200px;
+    font: 80pt Arial;
+}
+
+#agari-bg {
+    display: none;
+    text-align: center;
+
+    z-index: 300;
+}
+#agari-bg #agari  {
+    margin-top: 40px;
+    font: 60pt DFKai-SB;
+}
+#agari-bg #time {
+    font: 50pt Arial;
+}
+#agari-bg #hand {
+    margin-top: 20px;
+}
+#agari-bg #yaku  {
+    margin-top: 10px;
+    font: 25pt DFKai-SB;
+}
+
+#agari-bg #point {
+    margin-bottom: 30px;
+    font: 40pt Arial;
 }

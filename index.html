@@ -9,20 +9,40 @@
 </head>
 <body>
     <div id="container">
+
         <div id="menu-bg" class="bg">
             <div id="btn-container">
-                <span id="start" class="btn">START</span><br>
-                <span id="mode" class="btn">MODE: SPEED</span><br>
-                <span id="back" class="btn">BACK</span>
+                <span id="start" class="btn">開始</span><br>
+                <span id="mode" class="btn">模式: 競速</span><br>
+                <span id="back" class="btn">返回</span>
             </div>
+            <span id="tips">
+                <span>子彈時間 </span>
+                <span id="tips-key">space</span>
+            </span>
         </div>
+
         <div id="countdown-bg" class="bg">
             <span id="countdown">READY</span>
         </div>
+
+        <div id="timeout-bg" class="bg">
+            <div id="timeout">TIME UP</div>
+            <span id="timeout-ok" class="btn">好喔</span>
+        </div>
+
+        <div id="agari-bg" class="bg">
+            <div id="agari">和了</div>
+            <div id="time"></div>
+            <div id="hand"></div>
+            <div id="yaku"></div>
+            <div id="point"></div>
+        </div>
+
         <span id="setting"></span>
     </div>
 
-    <!--<script src="mjCalc/mjCalc.js"></script>-->
+    <script src="mjCalc/mahjong.js"></script>
     <script src="textureMap.js"></script>
     <script src="env.js"></script>
     <script src="game.js"></script>
