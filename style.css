@@ -110,17 +110,16 @@ body {
     font: 60pt DFKai-SB;
 }
 #agari-bg #time {
-    font: 50pt Arial;
+    font: 50pt DFKai-SB;
 }
 #agari-bg #hand {
     margin-top: 20px;
 }
 #agari-bg #yaku  {
-    margin-top: 10px;
     font: 25pt DFKai-SB;
 }
 
 #agari-bg #point {
-    margin-bottom: 30px;
-    font: 40pt Arial;
+    margin-top: 30px;
+    font: 40pt DFKai-SB;
 }

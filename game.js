@@ -90,7 +90,7 @@ function startSpeedMode() {
         handL = hand.length
         if(handL == 14 && handL != prevHandL && inGame) {
             hand = hand.map(x => parseInt(x));
-            var result = agariJudger(hand, 29);
+            var result = agariJudger(hand, 1);
             if(result) // agari
                 speedModeAgari(hand, result);
         }
@@ -111,7 +111,7 @@ function speedModeAgari(hand, result) {
     $("#agari-bg #yaku").text('');
     for(let yaku of result.yakus) {
         $("#agari-bg #yaku").append(
-            `<br><span>${yaku.name} ${yaku.hanCount}</span>`
+            `<br><span>${yaku.toString()}</span>`
         );
     }
     // point
@@ -120,7 +120,7 @@ function speedModeAgari(hand, result) {
     $("#agari-bg").fadeIn();
 }
 $("#agari-bg").click(function() { // return to title
-    $("#result-bg").fadeOut();
+    $("#agari-bg").fadeOut();
     resetWorld();
     initRun();
     $("#menu-bg").fadeIn();
