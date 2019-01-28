@@ -94,7 +94,7 @@ body {
 
     z-index: 300;
 }
-#timeout-bg #point-timeout {
+#timeout-bg #timeout {
     margin-top: 200px;
     font: 80pt Arial;
 }

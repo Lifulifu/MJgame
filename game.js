@@ -49,9 +49,9 @@ $("#start").click(function() { // start game
         if(mode == 0)
             startSpeedMode();
         else if(mode == 1)
-            startPointMode(3000);
+            startPointMode(3*60000);
         else    
-            startPointMode(5000);
+            startPointMode(5*60000);
     });
 });
 function countDown(count, callBack) {
@@ -153,9 +153,11 @@ function startPointMode(time_lim) {
             var hand = tilesOnPlatform();
             prevHandL = handL;
             handL = hand.length
-            if(handL == 2 && handL != prevHandL && inGame) {
-                console.log(hand);
-                pointModeAgari();
+            if(handL == 14 && handL != prevHandL && inGame) {
+                hand = hand.map(x => parseInt(x));
+                var result = agariJudger(hand, 1);
+                if(result) // agari
+                    pointModeAgari(hand, result);
             }
         }
     });
@@ -167,13 +169,13 @@ function pointModeTimeout() {
     $("#timeout-bg").fadeIn();
 }
 $("#timeout-bg .btn").click(function() { // return to title
-    $("#point-timeout-bg").fadeOut();
+    $("#timeout-bg").fadeOut();
     resetWorld();
     initRun();
     $("#menu-bg").fadeIn();
 });
-function pointModeAgari() {
-    speedModeAgari();
+function pointModeAgari(hand, result) {
+    speedModeAgari(hand, result);
 }
 
 
